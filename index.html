@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322c55e'%3E%3Cpath d='M7 19h10a2 2 0 002-2v-7h-4.586l-1.707-1.707A1 1 0 0012 8h-4a1 1 0 00-1 1v8a2 2 0 002 2zm10-11h-3.586l-1.707-1.707A1 1 0 0011 6H7a1 1 0 00-1 1v1h11v-1z'/%3E%3C/svg%3E" />
+    <meta name="description" content="RidePilot - Smart Assistant for Transfers. Keep your bookings, drivers, and clients perfectly organized." />
+    <meta name="keywords" content="transportation management, transfer booking, driver management, fleet management, ride booking" />
+    <meta property="og:title" content="RidePilot - Smart Transportation Assistant" />
+    <meta property="og:description" content="Keep your bookings, drivers, and clients perfectly organized with our smart transportation management system." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#22c55e" />
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ZRDF2QZTF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-8ZRDF2QZTF');
+    </script>
+    
+    <title>RidePilot - Your Smart Transportation Assistant</title>
+    <style>
+      /* Critical CSS for touch handling */
+      * {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f9fafb;
+        touch-action: pan-x pan-y;
+      }
+      
+      #root {
+        height: 100%;
+      }
+      
+      /* Improved touch targets for mobile */
+      @media (max-width: 768px) {
+        button, a, input[type="button"], input[type="submit"] {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+      
+      /* Loading spinner */
+      .initial-loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #f9fafb;
+        z-index: 9999;
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(34, 197, 94, 0.2);
+        border-radius: 50%;
+        border-top-color: #22c55e;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body ontouchstart="">
+    <div id="root">
+      <div class="initial-loader">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Fix for double-tap zooming on iOS
+      (function() {
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+          const now = Date.now();
+          if (now - lastTouchEnd < 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        }, { passive: false });
+        
+        // Prevent bounce scrolling on iOS
+        document.addEventListener('touchmove', function(event) {
+          if (event.touches.length > 1) {
+            event.preventDefault();
+          }
+        }, { passive: false });
+        
+        // Fix for touch events not working
+        document.addEventListener('touchstart', function() {}, { passive: true });
+      })();
+    </script>
+  </body>
+</html>
