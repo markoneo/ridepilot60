@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ChevronDown, ChevronRight, Users, Calendar, DollarSign, MapPin, Phone, Car, User, Clock, Eye, Edit, Trash2, Play, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -359,6 +359,70 @@ export default function ProjectListView({
     };
   }, []);
 
+  // Group projects by date and sort
+  const groupedProjects = useMemo(() => {
+    const groups: Record<string, Project[]> = {};
+    
+    projects.forEach(project => {
+      const dateKey = project.date;
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(project);
+    });
+
+    // Sort projects within each date group by time
+    Object.keys(groups).forEach(date => {
+      groups[date].sort((a, b) => {
+        const timeA = a.time || '00:00';
+        const timeB = b.time || '00:00';
+        return timeA.localeCompare(timeB);
+      });
+    });
+
+    // Sort dates
+    const sortedDates = Object.keys(groups).sort((a, b) => {
+      return new Date(a).getTime() - new Date(b).getTime();
+    });
+
+    return sortedDates.map(date => ({
+      date,
+      projects: groups[date]
+    }));
+  }, [projects]);
+
+  const formatDateHeader = useCallback((dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const isToday = date.toDateString() === today.toDateString();
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    
+    if (isToday) return 'Today';
+    if (isTomorrow) return 'Tomorrow';
+    
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric',
+      year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+    });
+  }, []);
+
+  const getDateStatus = useCallback((dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    
+    if (date < today) return 'past';
+    if (date.getTime() === today.getTime()) return 'today';
+    if (date.getTime() === today.getTime() + 24 * 60 * 60 * 1000) return 'tomorrow';
+    return 'future';
+  }, []);
+
   if (projects.length === 0) {
     return (
       <div className="text-center py-12">
@@ -372,11 +436,11 @@ export default function ProjectListView({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* List Controls */}
       <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
         <div className="text-sm text-gray-600">
-          {projects.length} project{projects.length !== 1 ? 's' : ''} found
+          {projects.length} project{projects.length !== 1 ? 's' : ''} found across {groupedProjects.length} date{groupedProjects.length !== 1 ? 's' : ''}
         </div>
         <button
           onClick={toggleExpandAll}
@@ -386,25 +450,75 @@ export default function ProjectListView({
         </button>
       </div>
 
-      {/* Project List */}
-      <div className="space-y-0">
-        {projects.map((project) => {
-          const { isUpcoming, isUrgent } = getProjectUrgency(project);
+      {/* Project List Grouped by Date */}
+      <div className="space-y-6">
+        {groupedProjects.map(({ date, projects: dateProjects }) => {
+          const dateStatus = getDateStatus(date);
           
           return (
-            <ProjectListItem
-              key={project.id}
-              project={project}
-              companyName={getCompanyName(project.company)}
-              driverName={getDriverName(project.driver)}
-              carTypeName={getCarTypeName(project.carType)}
-              colorTheme={getCompanyTheme(project.company)}
-              isExpanded={expandedItems.has(project.id)}
-              onToggle={() => toggleExpanded(project.id)}
-              onAction={(action) => onProjectAction(project.id, action)}
-              isUpcoming={isUpcoming}
-              isUrgent={isUrgent}
-            />
+            <div key={date} className="space-y-3">
+              {/* Date Header */}
+              <div className={`sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b pb-3 ${
+                dateStatus === 'today' ? 'border-blue-200' : 
+                dateStatus === 'tomorrow' ? 'border-orange-200' : 
+                dateStatus === 'past' ? 'border-gray-200' : 'border-gray-100'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <h3 className={`text-lg font-semibold ${
+                      dateStatus === 'today' ? 'text-blue-900' : 
+                      dateStatus === 'tomorrow' ? 'text-orange-900' : 
+                      dateStatus === 'past' ? 'text-gray-600' : 'text-gray-900'
+                    }`}>
+                      {formatDateHeader(date)}
+                    </h3>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      dateStatus === 'today' ? 'bg-blue-100 text-blue-800' : 
+                      dateStatus === 'tomorrow' ? 'bg-orange-100 text-orange-800' : 
+                      dateStatus === 'past' ? 'bg-gray-100 text-gray-600' : 'bg-gray-50 text-gray-700'
+                    }`}>
+                      {dateProjects.length} trip{dateProjects.length !== 1 ? 's' : ''}
+                    </span>
+                    {dateStatus === 'today' && (
+                      <span className="flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(date).toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Projects for this date */}
+              <div className="space-y-2">
+                {dateProjects.map((project) => {
+                  const { isUpcoming, isUrgent } = getProjectUrgency(project);
+                  
+                  return (
+                    <ProjectListItem
+                      key={project.id}
+                      project={project}
+                      companyName={getCompanyName(project.company)}
+                      driverName={getDriverName(project.driver)}
+                      carTypeName={getCarTypeName(project.carType)}
+                      colorTheme={getCompanyTheme(project.company)}
+                      isExpanded={expandedItems.has(project.id)}
+                      onToggle={() => toggleExpanded(project.id)}
+                      onAction={(action) => onProjectAction(project.id, action)}
+                      isUpcoming={isUpcoming}
+                      isUrgent={isUrgent}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           );
         })}
       </div>
