@@ -111,7 +111,13 @@ RidePilot is a comprehensive web-based transportation scheduling and management 
 
 ## Changelog
 
-- June 26, 2025. Initial setup
+- June 26, 2025: Migration from Bolt to Replit completed
+  - Installed all required dependencies (React Router, charts, leaflet maps, Supabase client)
+  - Configured Supabase connection with user credentials
+  - Created enhanced list view component with expand/collapse functionality
+  - Added view toggle between grid, list, and analytics modes
+  - Preserved existing Supabase data connection as requested
+- June 26, 2025: Initial setup
 
 ## User Preferences
 

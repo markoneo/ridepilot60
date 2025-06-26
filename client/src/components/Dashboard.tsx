@@ -38,6 +38,7 @@ import { useAuth } from '../contexts/AuthContext';
 import VoucherGenerator from './VoucherGenerator';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProjectGrid from './enhanced/ProjectGrid';
+import ProjectListView from './enhanced/ProjectListView';
 import LocationAnalytics from './LocationAnalytics';
 
 // Memoized Enhanced Stats Card Component
@@ -651,11 +652,17 @@ export default function Dashboard() {
                       getCompanyTheme={getCompanyColorTheme}
                     />
                   ) : (
-                    <div className="space-y-8">
-                      <div className="text-center py-8">
-                        <p className="text-slate-500">List view coming soon...</p>
-                      </div>
-                    </div>
+                    <ProjectListView
+                      projects={activeProjects}
+                      companies={companies}
+                      drivers={drivers}
+                      carTypes={carTypes}
+                      onProjectAction={handleProjectAction}
+                      getCompanyName={getCompanyName}
+                      getDriverName={getDriverName}
+                      getCarTypeName={getCarTypeName}
+                      getCompanyTheme={getCompanyColorTheme}
+                    />
                   )}
                 </div>
               )}
