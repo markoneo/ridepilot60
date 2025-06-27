@@ -366,7 +366,7 @@ const ProjectCard = React.memo(({
             </div>
             
             {/* Primary Action */}
-            {onStart && (
+            {onStart && project.status === 'active' && (
               <motion.button
                 whileHover={{ scale: 1.02, x: 2 }}
                 whileTap={{ scale: 0.98 }}
@@ -386,6 +386,14 @@ const ProjectCard = React.memo(({
                   </>
                 )}
               </motion.button>
+            )}
+            
+            {/* Completed Trip Badge */}
+            {project.status === 'completed' && (
+              <div className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-emerald-700 bg-emerald-100 border border-emerald-200">
+                <CheckCircle2 className="w-5 h-5" />
+                Trip Completed
+              </div>
             )}
           </div>
         </div>
