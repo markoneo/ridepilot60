@@ -14,7 +14,7 @@ export default function Drivers() {
     name: '',
     phone: '',
     license: '',
-    status: 'available' as const,
+    status: 'available' as 'available' | 'busy' | 'offline',
     pin: '1234', // Default PIN
   });
 
@@ -44,7 +44,28 @@ export default function Drivers() {
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (editingDriver) {
+      // Check for duplicate driver ID (license)
+      const duplicateId = drivers.find(driver => 
+        driver.license === formData.license && driver.id !== editingDriver
+      );
+      
+      if (duplicateId) {
+        alert('A driver with this ID already exists. Please use a unique Driver ID.');
+        return;
+      }
+      
+      // Check for duplicate PIN
+      const duplicatePin = drivers.find(driver => 
+        driver.pin === formData.pin && driver.id !== editingDriver
+      );
+      
+      if (duplicatePin) {
+        alert('A driver with this PIN already exists. Please use a unique PIN.');
+        return;
+      }
+      
       updateDriver(editingDriver, formData);
       setEditingDriver(null);
     }
@@ -60,6 +81,27 @@ export default function Drivers() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check for duplicate driver ID (license)
+    const duplicateId = drivers.find(driver => 
+      driver.license === formData.license && driver.id !== editingDriver
+    );
+    
+    if (duplicateId) {
+      alert('A driver with this ID already exists. Please use a unique Driver ID.');
+      return;
+    }
+    
+    // Check for duplicate PIN
+    const duplicatePin = drivers.find(driver => 
+      driver.pin === formData.pin && driver.id !== editingDriver
+    );
+    
+    if (duplicatePin) {
+      alert('A driver with this PIN already exists. Please use a unique PIN.');
+      return;
+    }
+    
     addDriver(formData);
     setFormData({ name: '', phone: '', license: '', status: 'available', pin: '1234' });
     setShowForm(false);

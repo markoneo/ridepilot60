@@ -23,6 +23,7 @@ interface Driver {
   phone: string;
   license: string;
   status: 'available' | 'busy' | 'offline';
+  pin?: string;
   total_earnings?: number;
 }
 
