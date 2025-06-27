@@ -421,7 +421,7 @@ export default function Dashboard() {
               </button>
               
               {/* View Mode Toggle */}
-              <div className="flex items-center bg-white/50 rounded-lg p-1">
+              <div className="flex items-center bg-white/50 rounded-lg p-1 ml-[9px] mr-[9px] pl-[11px] pr-[11px] pt-[9px] pb-[9px] mt-[0px] mb-[0px]">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition-all ${
@@ -470,7 +470,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center text-red-700">
@@ -710,7 +709,6 @@ export default function Dashboard() {
           </Modal>
         )}
       </div>
-      
       {/* Mobile Bottom Navigation - Optimized */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 md:hidden shadow-lg will-change-transform">
         <div className="grid grid-cols-5 gap-1 p-2">
