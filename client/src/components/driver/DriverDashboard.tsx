@@ -344,6 +344,7 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
   const [upcomingIn24Hours, setUpcomingIn24Hours] = useState<any[]>([]);
   const [startedProjects, setStartedProjects] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'history'>('upcoming');
 
   // Filter projects for this driver using the UUID
   useEffect(() => {
@@ -560,39 +561,71 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
           </motion.div>
         )}
 
-        {/* Trip Sections */}
-        <div className="space-y-8">
-          {/* Upcoming Trips */}
-          {upcomingIn24Hours.length > 0 && (
-            <div>
-              <motion.h2 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+        {/* Tab Navigation */}
+        <div className="mb-8">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 p-2">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveTab('upcoming')}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                  activeTab === 'upcoming'
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                }`}
               >
-                <Zap className="w-6 h-6 text-orange-500" />
-                Priority Trips
-              </motion.h2>
-              <div className="space-y-6">
-                {upcomingIn24Hours.map((project, index) => (
-                  <TripCard
-                    key={project.id}
-                    project={project}
-                    index={index}
-                    onStart={handleStartTrip}
-                    onComplete={handleCompleteTrip}
-                    isStarted={startedProjects.has(project.id)}
-                    getCompanyName={getCompanyName}
-                    getCarTypeName={getCarTypeName}
-                  />
-                ))}
-              </div>
+                <Clock className="w-5 h-5" />
+                Upcoming Trips
+              </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                  activeTab === 'history'
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50'
+                }`}
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                Trip History ({completedProjects.length})
+              </button>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Today's Trips */}
-          {todayProjects.length > 0 && (
-            <div>
+        {/* Tab Content */}
+        <div className="space-y-8">
+          {activeTab === 'upcoming' && (
+            <>
+              {/* Upcoming Trips */}
+              {upcomingIn24Hours.length > 0 && (
+                <div>
+                  <motion.h2 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+                  >
+                    <Zap className="w-6 h-6 text-orange-500" />
+                    Priority Trips
+                  </motion.h2>
+                  <div className="space-y-6">
+                    {upcomingIn24Hours.map((project, index) => (
+                      <TripCard
+                        key={project.id}
+                        project={project}
+                        index={index}
+                        onStart={handleStartTrip}
+                        onComplete={handleCompleteTrip}
+                        isStarted={startedProjects.has(project.id)}
+                        getCompanyName={getCompanyName}
+                        getCarTypeName={getCarTypeName}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Today's Trips */}
+              {todayProjects.length > 0 && (
+                <div>
               <motion.h2 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -620,11 +653,11 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
                   );
                 })}
               </div>
-            </div>
-          )}
+                </div>
+              )}
 
-          {/* Future Trips Preview */}
-          {futureProjects.length > 0 && (
+              {/* Future Trips Preview */}
+              {futureProjects.length > 0 && (
             <div>
               <motion.h2 
                 initial={{ opacity: 0, x: -20 }}
@@ -697,11 +730,156 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
                   );
                 })}
               </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
 
-          {/* No trips message */}
-          {driverProjects.length === 0 && (
+          {/* History Tab */}
+          {activeTab === 'history' && (
+            <>
+              {completedProjects.length > 0 ? (
+                <div>
+                  <motion.h2 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                    Completed Trips
+                  </motion.h2>
+                  <div className="space-y-4">
+                    {completedProjects
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map((project, index) => {
+                        const driverFee = project.driverFee > 0 ? project.driverFee : project.price;
+                        
+                        return (
+                          <motion.div
+                            key={project.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="bg-white/95 rounded-xl border border-emerald-200 shadow-lg overflow-hidden"
+                          >
+                            {/* Header */}
+                            <div className="p-4 bg-emerald-50 border-b border-emerald-100">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="bg-emerald-500 text-white p-2 rounded-lg">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <div className="text-sm text-emerald-700 font-medium">
+                                      {new Date(project.date).toLocaleDateString('en-US', { 
+                                        weekday: 'long', 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                      })}
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-900">{project.time.substring(0, 5)}</div>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-2xl font-bold text-emerald-600">
+                                    {formatCurrency(driverFee)}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    #{project.bookingId}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="p-4 space-y-4">
+                              <div className="flex items-center gap-3">
+                                <User className="w-5 h-5 text-gray-400" />
+                                <span className="font-semibold text-gray-900">{project.clientName}</span>
+                                <span className="text-sm text-gray-500">• {getCompanyName(project.company)}</span>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="flex items-center gap-2">
+                                  <Car className="w-4 h-4 text-gray-400" />
+                                  <span className="text-gray-600">{getCarTypeName(project.carType)}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Users className="w-4 h-4 text-gray-400" />
+                                  <span className="text-gray-600">{project.passengers} passengers</span>
+                                </div>
+                              </div>
+
+                              {/* Locations */}
+                              <div className="space-y-3">
+                                <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                                  <div className="flex items-start gap-3">
+                                    <div className="bg-emerald-500 p-2 rounded-lg">
+                                      <MapPin className="w-4 h-4 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-emerald-700 uppercase tracking-wide mb-1">
+                                        Pickup
+                                      </p>
+                                      <p className="text-sm text-gray-900 break-words">
+                                        {project.pickupLocation}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+                                  <div className="flex items-start gap-3">
+                                    <div className="bg-red-500 p-2 rounded-lg">
+                                      <MapPin className="w-4 h-4 text-white" />
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-1">
+                                        Dropoff
+                                      </p>
+                                      <p className="text-sm text-gray-900 break-words">
+                                        {project.dropoffLocation}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {project.description && (
+                                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                                  <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">
+                                    Notes
+                                  </p>
+                                  <p className="text-sm text-blue-900">{project.description}</p>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-16 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg"
+                >
+                  <div className="bg-gradient-to-br from-emerald-100 to-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No completed trips yet</h3>
+                  <p className="text-gray-600">
+                    Your completed trips will appear here once you finish them.
+                  </p>
+                </motion.div>
+              )}
+            </>
+          )}
+
+          {/* No trips message for upcoming tab */}
+          {activeTab === 'upcoming' && driverProjects.length === 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
