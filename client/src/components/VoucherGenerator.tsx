@@ -609,14 +609,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                   >
                     <Save className="h-5 w-5" />
                   </button>
-                  <a
-                    href={generateDownloadUrl()}
-                    download={`voucher-${project.bookingId || 'transfer'}.txt`}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600 inline-flex items-center justify-center"
-                    title="Download as Text"
-                  >
-                    <Download className="h-5 w-5" />
-                  </a>
+                  
                   <button
                     onClick={printVoucher}
                     className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
