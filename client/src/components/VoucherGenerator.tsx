@@ -597,7 +597,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                     title="Share voucher directly to WhatsApp - client can save or print"
                   >
                     <MessageCircle className="h-6 w-6" />
-                    <span className="text-sm font-medium hidden md:inline">WhatsApp</span>
+                    <span className="text-sm font-medium">Share on WhatsApp</span>
                   </button>
                   
                   <button
@@ -607,7 +607,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                     title="Save voucher as image file - perfect for sharing via email or messaging"
                   >
                     <Save className="h-6 w-6" />
-                    <span className="text-sm font-medium hidden md:inline">Save</span>
+                    <span className="text-sm font-medium">Save as Image</span>
                   </button>
                   
                   <button
@@ -616,7 +616,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                     title="Print voucher on paper - give to client or keep for records"
                   >
                     <Printer className="h-6 w-6" />
-                    <span className="text-sm font-medium hidden md:inline">Print</span>
+                    <span className="text-sm font-medium">Print Voucher</span>
                   </button>
                 </>
               )}
