@@ -359,7 +359,6 @@ const ProjectCard = React.memo(({
               <button
                 onClick={onDelete}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
-                title="Delete this project permanently"
               >
                 <Trash2 className="w-5 h-5" />
                 <span className="text-sm font-medium">Delete</span>
