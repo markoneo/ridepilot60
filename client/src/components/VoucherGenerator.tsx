@@ -587,35 +587,36 @@ ${project.description ? `Notes: ${project.description}` : ''}
               ref={controlsRef}
               className={`${
                 !showControls && displayMode === 'page' ? 'hidden md:flex' : 'flex'
-              } space-x-2`}
+              } space-x-3`}
             >
               {shareMode === null && (
                 <>
-                  
                   <button
                     onClick={shareToWhatsApp}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
-                    title="Share via WhatsApp"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-400 active:bg-green-600 text-white"
+                    title="Share voucher directly to WhatsApp - client can save or print"
                   >
-                    <MessageCircle className="h-5 w-5" />
+                    <MessageCircle className="h-6 w-6" />
+                    <span className="text-sm font-medium hidden md:inline">WhatsApp</span>
                   </button>
-                  
                   
                   <button
                     onClick={downloadAsImage}
                     disabled={isGeneratingImage}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600 disabled:opacity-50"
-                    title="Save as Image"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-400 active:bg-green-600 disabled:opacity-50 text-white"
+                    title="Save voucher as image file - perfect for sharing via email or messaging"
                   >
-                    <Save className="h-5 w-5" />
+                    <Save className="h-6 w-6" />
+                    <span className="text-sm font-medium hidden md:inline">Save</span>
                   </button>
                   
                   <button
                     onClick={printVoucher}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
-                    title="Print Voucher"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-green-400 active:bg-green-600 text-white"
+                    title="Print voucher on paper - give to client or keep for records"
                   >
-                    <Printer className="h-5 w-5" />
+                    <Printer className="h-6 w-6" />
+                    <span className="text-sm font-medium hidden md:inline">Print</span>
                   </button>
                 </>
               )}

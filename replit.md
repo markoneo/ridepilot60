@@ -111,6 +111,11 @@ RidePilot is a comprehensive web-based transportation scheduling and management 
 
 ## Changelog
 
+- June 27, 2025: Enhanced button usability improvements
+  - Made project card action buttons larger with text labels and detailed explanations
+  - Enhanced voucher generator controls with bigger icons and clear purpose descriptions
+  - Improved user experience with self-explanatory button interfaces
+  - Added comprehensive tooltips for all interactive elements
 - June 26, 2025: Migration from Bolt to Replit completed
   - Installed all required dependencies (React Router, charts, leaflet maps, Supabase client)
   - Configured Supabase connection with user credentials
