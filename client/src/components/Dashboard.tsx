@@ -420,40 +420,43 @@ export default function Dashboard() {
                 <span className="text-sm">{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
               </button>
               
-              {/* View Mode Toggle */}
-              <div className="flex items-center bg-white/50 rounded-lg p-1 ml-[9px] mr-[9px] pl-[11px] pr-[11px] pt-[9px] pb-[9px] mt-[0px] mb-[0px]">
+              {/* View Mode Toggle with Labels */}
+              <div className="flex items-center bg-white/50 rounded-lg p-2 gap-2">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md transition-all ${
+                  className={`flex items-center gap-2 px-4 py-3 rounded-md transition-all ${
                     viewMode === 'grid' 
                       ? 'bg-white shadow-sm text-blue-600' 
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
-                  title="Grid View"
+                  title="Grid View - See projects as cards in a grid layout"
                 >
-                  <Grid3X3 className="w-4 h-4" />
+                  <Grid3X3 className="w-5 h-5" />
+                  <span className="text-sm font-medium">Grid</span>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-all ${
+                  className={`flex items-center gap-2 px-4 py-3 rounded-md transition-all ${
                     viewMode === 'list' 
                       ? 'bg-white shadow-sm text-blue-600' 
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
-                  title="List View"
+                  title="List View - See projects organized by date with expandable details"
                 >
-                  <List className="w-4 h-4" />
+                  <List className="w-5 h-5" />
+                  <span className="text-sm font-medium">List</span>
                 </button>
                 <button
                   onClick={() => setViewMode('analytics')}
-                  className={`p-2 rounded-md transition-all ${
+                  className={`flex items-center gap-2 px-4 py-3 rounded-md transition-all ${
                     viewMode === 'analytics' 
                       ? 'bg-white shadow-sm text-blue-600' 
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
-                  title="Location Analytics"
+                  title="Analytics View - Interactive map showing pickup and dropoff locations"
                 >
-                  <Map className="w-4 h-4" />
+                  <Map className="w-5 h-5" />
+                  <span className="text-sm font-medium">Map</span>
                 </button>
               </div>
               
