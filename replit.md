@@ -98,11 +98,21 @@ RidePilot is a comprehensive web-based transportation scheduling and management 
 - **Port**: 5000 (mapped to external port 80)
 - **Environment**: NODE_ENV=development
 
-### Production Build
+### Production Deployment Options
+
+#### Option 1: Replit Deployment
 - **Frontend Build**: `vite build` outputs to `dist/public`
 - **Backend Build**: `esbuild` bundles server to `dist/index.js`
 - **Deployment**: Auto-scaling on Replit
 - **Environment**: NODE_ENV=production
+
+#### Option 2: Netlify Deployment (GitHub Integration)
+- **Repository**: Push code to GitHub repository
+- **Build Command**: `npm run build` (configured in netlify.toml)
+- **Publish Directory**: `dist/public`
+- **Functions**: Serverless functions in `netlify/functions/`
+- **Continuous Deployment**: Auto-deploy on GitHub push
+- **Custom Domain**: Supported with automatic HTTPS
 
 ### Database
 - **Migrations**: Drizzle migrations in `/migrations` directory
