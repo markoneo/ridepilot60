@@ -610,13 +610,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
             >
               {shareMode === null && (
                 <>
-                  <button
-                    onClick={shareVoucher}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600 md:hidden"
-                    title="Share Voucher"
-                  >
-                    <Share2 className="h-5 w-5" />
-                  </button>
+                  
                   <button
                     onClick={shareToWhatsApp}
                     className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
