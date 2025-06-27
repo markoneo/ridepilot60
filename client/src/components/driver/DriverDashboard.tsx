@@ -341,6 +341,9 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
   const [driverProjects, setDriverProjects] = useState<any[]>([]);
   const [completedProjects, setCompletedProjects] = useState<any[]>([]);
   const [todayEarnings, setTodayEarnings] = useState<number>(0);
+  const [weeklyEarnings, setWeeklyEarnings] = useState<number>(0);
+  const [monthlyEarnings, setMonthlyEarnings] = useState<number>(0);
+  const [totalEarnings, setTotalEarnings] = useState<number>(0);
   const [upcomingIn24Hours, setUpcomingIn24Hours] = useState<any[]>([]);
   const [startedProjects, setStartedProjects] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -381,20 +384,52 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
     setUpcomingIn24Hours(upcoming);
   }, [driverProjects]);
 
-  // Calculate today's earnings from completed trips
+  // Calculate earnings from completed trips
   useEffect(() => {
-    const today = new Date().toDateString();
-    const todayCompleted = completedProjects.filter(project => {
-      const projectDate = new Date(project.date).toDateString();
-      return projectDate === today;
+    const now = new Date();
+    const today = now.toDateString();
+    
+    // Start of current week (Monday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    startOfWeek.setHours(0, 0, 0, 0);
+    
+    // Start of current month
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    // Calculate different time period earnings
+    let todayTotal = 0;
+    let weeklyTotal = 0;
+    let monthlyTotal = 0;
+    let allTimeTotal = 0;
+    
+    completedProjects.forEach(project => {
+      const projectDate = new Date(project.date);
+      const fee = project.driverFee > 0 ? project.driverFee : project.price;
+      
+      // Today's earnings
+      if (projectDate.toDateString() === today) {
+        todayTotal += fee;
+      }
+      
+      // Weekly earnings
+      if (projectDate >= startOfWeek) {
+        weeklyTotal += fee;
+      }
+      
+      // Monthly earnings
+      if (projectDate >= startOfMonth) {
+        monthlyTotal += fee;
+      }
+      
+      // All-time earnings
+      allTimeTotal += fee;
     });
     
-    const todayTotal = todayCompleted.reduce((sum, project) => {
-      const fee = project.driverFee > 0 ? project.driverFee : project.price;
-      return sum + fee;
-    }, 0);
-    
     setTodayEarnings(todayTotal);
+    setWeeklyEarnings(weeklyTotal);
+    setMonthlyEarnings(monthlyTotal);
+    setTotalEarnings(allTimeTotal);
   }, [completedProjects]);
 
   const getCompanyName = (id: string) => {
@@ -536,6 +571,108 @@ export default function DriverDashboard({ driverId, driverName, driverUuid, onLo
             delay={0.3}
           />
         </div>
+
+        {/* Earnings Overview */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl shadow-lg border border-emerald-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-emerald-500 p-3 rounded-full">
+                <DollarSign className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Earnings Overview</h2>
+                <p className="text-gray-600">Track your earnings from completed trips</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 font-medium mb-1">Today</p>
+                  <p className="text-2xl font-bold text-emerald-600">{formatCurrency(todayEarnings)}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {completedProjects.filter(p => new Date(p.date).toDateString() === new Date().toDateString()).length} trips
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 font-medium mb-1">This Week</p>
+                  <p className="text-2xl font-bold text-emerald-600">{formatCurrency(weeklyEarnings)}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {(() => {
+                      const startOfWeek = new Date();
+                      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
+                      startOfWeek.setHours(0, 0, 0, 0);
+                      return completedProjects.filter(p => new Date(p.date) >= startOfWeek).length;
+                    })()} trips
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 font-medium mb-1">This Month</p>
+                  <p className="text-2xl font-bold text-emerald-600">{formatCurrency(monthlyEarnings)}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {(() => {
+                      const startOfMonth = new Date();
+                      startOfMonth.setDate(1);
+                      startOfMonth.setHours(0, 0, 0, 0);
+                      return completedProjects.filter(p => new Date(p.date) >= startOfMonth).length;
+                    })()} trips
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-emerald-100">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 font-medium mb-1">All Time</p>
+                  <p className="text-2xl font-bold text-emerald-600">{formatCurrency(totalEarnings)}</p>
+                  <p className="text-xs text-gray-500 mt-1">{completedProjects.length} trips</p>
+                </div>
+              </div>
+            </div>
+            
+            {totalEarnings > 0 && (
+              <div className="mt-6 p-4 bg-white/60 rounded-xl border border-emerald-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Average per Trip</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {formatCurrency(completedProjects.length > 0 ? totalEarnings / completedProjects.length : 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 font-medium">Best Day This Month</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {(() => {
+                        const startOfMonth = new Date();
+                        startOfMonth.setDate(1);
+                        const monthlyTrips = completedProjects.filter(p => new Date(p.date) >= startOfMonth);
+                        
+                        const dailyEarnings = monthlyTrips.reduce((acc, trip) => {
+                          const date = trip.date;
+                          const earnings = trip.driverFee > 0 ? trip.driverFee : trip.price;
+                          acc[date] = (acc[date] || 0) + earnings;
+                          return acc;
+                        }, {});
+                        
+                        const maxEarnings = Math.max(...Object.values(dailyEarnings), 0);
+                        return formatCurrency(maxEarnings);
+                      })()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
 
         {/* Upcoming Trips Alert */}
         {upcomingIn24Hours.length > 0 && (
