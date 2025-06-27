@@ -477,7 +477,7 @@ export default function ProjectListView({
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-[#fafbff]">
                     {new Date(date).toLocaleDateString('en-US', { 
                       month: 'short', 
                       day: 'numeric',
