@@ -325,40 +325,44 @@ const ProjectCard = React.memo(({
         {/* Actions Section - Clear separation */}
         <div className="p-4 bg-slate-50 border-t border-slate-100">
           <div className="flex items-center justify-between">
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2">
+            {/* Quick Actions with Labels */}
+            <div className="flex items-center gap-3">
               <button
                 onClick={onView}
-                className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
-                title="View Details"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
+                title="View full project details and client information"
               >
-                <Eye className="w-4 h-4" />
+                <Eye className="w-5 h-5" />
+                <span className="text-sm font-medium">View</span>
               </button>
               
               <button
                 onClick={onEdit}
-                className="p-2 rounded-full hover:bg-indigo-100 text-indigo-600 transition-colors"
-                title="Edit Project"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-100 text-indigo-600 transition-colors"
+                title="Edit project details, time, location, or driver"
               >
-                <Edit className="w-4 h-4" />
+                <Edit className="w-5 h-5" />
+                <span className="text-sm font-medium">Edit</span>
               </button>
               
               {onVoucher && (
                 <button
                   onClick={onVoucher}
-                  className="p-2 rounded-full hover:bg-emerald-100 text-emerald-600 transition-colors"
-                  title="Generate Voucher"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-100 text-emerald-600 transition-colors"
+                  title="Generate voucher for client - share via WhatsApp, email, or print"
                 >
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-5 h-5" />
+                  <span className="text-sm font-medium">Voucher</span>
                 </button>
               )}
               
               <button
                 onClick={onDelete}
-                className="p-2 rounded-full hover:bg-red-100 text-red-600 transition-colors"
-                title="Delete Project"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                title="Delete this project permanently"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-5 h-5" />
+                <span className="text-sm font-medium">Delete</span>
               </button>
             </div>
             
