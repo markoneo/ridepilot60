@@ -460,11 +460,7 @@ export default function ProjectListView({
               <div className="sticky top-0 z-10 backdrop-blur-sm border-b pb-3 border-gray-100 bg-[#2b819ee6]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <h3 className={`text-lg font-semibold ${
-                      dateStatus === 'today' ? 'text-blue-900' : 
-                      dateStatus === 'tomorrow' ? 'text-orange-900' : 
-                      dateStatus === 'past' ? 'text-gray-600' : 'text-gray-900'
-                    }`}>
+                    <h3 className="text-lg font-semibold text-[#f2f4f7]">
                       {formatDateHeader(date)}
                     </h3>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
