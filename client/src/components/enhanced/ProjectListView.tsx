@@ -449,7 +449,6 @@ export default function ProjectListView({
           {expandAll ? 'Collapse All' : 'Expand All'}
         </button>
       </div>
-
       {/* Project List Grouped by Date */}
       <div className="space-y-6">
         {groupedProjects.map(({ date, projects: dateProjects }) => {
@@ -458,11 +457,7 @@ export default function ProjectListView({
           return (
             <div key={date} className="space-y-3">
               {/* Date Header */}
-              <div className={`sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b pb-3 ${
-                dateStatus === 'today' ? 'border-blue-200' : 
-                dateStatus === 'tomorrow' ? 'border-orange-200' : 
-                dateStatus === 'past' ? 'border-gray-200' : 'border-gray-100'
-              }`}>
+              <div className="sticky top-0 z-10 backdrop-blur-sm border-b pb-3 border-gray-100 bg-[#2b819ee6]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <h3 className={`text-lg font-semibold ${
@@ -495,7 +490,6 @@ export default function ProjectListView({
                   </div>
                 </div>
               </div>
-
               {/* Projects for this date */}
               <div className="space-y-2">
                 {dateProjects.map((project) => {
