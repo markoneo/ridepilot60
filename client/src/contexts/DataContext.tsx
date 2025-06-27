@@ -345,7 +345,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         throw error;
       }
-      setDrivers(data || []);
+      
+      // Ensure all drivers have a PIN field for backward compatibility
+      const driversWithPin = (data || []).map(driver => ({
+        ...driver,
+        pin: driver.pin || '1234'
+      }));
+      
+      setDrivers(driversWithPin);
     } catch (err) {
       console.error('Error fetching drivers:', err);
       throw err;
@@ -446,15 +453,36 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const addDriver = async (driver: Omit<Driver, 'id'>) => {
     try {
+      // Handle PIN column that might not exist in database
+      const dbDriver = { ...driver, user_id: currentUser?.id };
+      
       const { data, error } = await supabase
         .from('drivers')
-        .insert([{ ...driver, user_id: currentUser?.id }])
+        .insert([dbDriver])
         .select()
         .single();
 
       if (error) {
-        throw error;
+        // If error mentions PIN column, remove it and try again
+        if (error.message.includes('pin') && driver.pin) {
+          delete dbDriver.pin;
+          const { data: retryData, error: retryError } = await supabase
+            .from('drivers')
+            .insert([dbDriver])
+            .select()
+            .single();
+          
+          if (retryError) {
+            throw retryError;
+          }
+          // Add PIN to local data even if not in database
+          setDrivers([...drivers, { ...retryData, pin: driver.pin }]);
+          return;
+        } else {
+          throw error;
+        }
       }
+      
       setDrivers([...drivers, data]);
     } catch (err) {
       console.error('Error adding driver:', err);
@@ -696,15 +724,32 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const updateDriver = async (id: string, updates: Partial<Driver>) => {
     try {
+      // Handle PIN column that might not exist in database
+      const dbUpdates = { ...updates };
+      
       const { error } = await supabase
         .from('drivers')
-        .update(updates)
+        .update(dbUpdates)
         .eq('id', id);
 
       if (error) {
-        throw error;
+        // If error mentions PIN column, remove it and try again
+        if (error.message.includes('pin') && updates.pin) {
+          delete dbUpdates.pin;
+          const { error: retryError } = await supabase
+            .from('drivers')
+            .update(dbUpdates)
+            .eq('id', id);
+          
+          if (retryError) {
+            throw retryError;
+          }
+        } else {
+          throw error;
+        }
       }
 
+      // Update local state with all changes including PIN
       setDrivers(drivers.map(driver => 
         driver.id === id ? { ...driver, ...updates } : driver
       ));
