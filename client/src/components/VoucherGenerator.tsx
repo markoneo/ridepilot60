@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useData } from '../contexts/DataContext';
-import { Download, Copy, Check, Printer, Mail, FileImage, Share2, X, Save, MessageCircle } from 'lucide-react';
+import { Download, Copy, Check, Printer, FileImage, Share2, X, Save, MessageCircle } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toPng, toJpeg } from 'html-to-image';
 import { saveAs } from 'file-saver';
@@ -14,9 +14,7 @@ interface VoucherGeneratorProps {
 export default function VoucherGenerator({ projectId, onClose, displayMode = 'modal' }: VoucherGeneratorProps) {
   const { projects, companies, drivers, carTypes } = useData();
   const [copied, setCopied] = useState(false);
-  const [shareMode, setShareMode] = useState<'email' | 'copy' | null>(null);
-  const [email, setEmail] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
+  const [shareMode, setShareMode] = useState<'copy' | null>(null);
   const [imageFormat, setImageFormat] = useState<'png' | 'jpeg'>('jpeg');
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -250,24 +248,7 @@ ${company?.name || 'Transportation Service'}`;
     }
   };
 
-  // Simulate email sending
-  const sendEmail = () => {
-    if (!email) return;
-    
-    // In a real application, this would send an API request to send the email
-    console.log(`Sending voucher to ${email}`);
-    
-    // Show success message
-    setEmailSent(true);
-    setStatusMessage({
-      text: `Voucher sent to ${email}`,
-      type: 'success'
-    });
-    setTimeout(() => {
-      setEmailSent(false);
-      setShareMode(null);
-    }, 3000);
-  };
+  
 
   // Generate download URL for a text file
   const generateDownloadUrl = () => {
@@ -618,13 +599,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                   >
                     <MessageCircle className="h-5 w-5" />
                   </button>
-                  <button
-                    onClick={() => setShareMode('email')}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
-                    title="Email Voucher"
-                  >
-                    <Mail className="h-5 w-5" />
-                  </button>
+                  
                   <button
                     onClick={copyToClipboard}
                     className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
@@ -657,56 +632,11 @@ ${project.description ? `Notes: ${project.description}` : ''}
                   </button>
                 </>
               )}
-              {shareMode === 'email' && (
-                <button
-                  onClick={() => setShareMode(null)}
-                  className="text-white text-sm underline"
-                >
-                  Cancel
-                </button>
-              )}
+              
             </div>
           </div>
           
-          {/* Email sharing UI */}
-          {shareMode === 'email' && (
-            <div className="p-4 border-b no-print">
-              {emailSent ? (
-                <div className="flex items-center justify-center text-green-600 py-2">
-                  <Check className="h-5 w-5 mr-2" />
-                  <span>Email sent successfully!</span>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Send voucher to:
-                    </label>
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0">
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="client@example.com"
-                        className="flex-1 rounded-md sm:rounded-l-md sm:rounded-r-none border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 px-3 py-2 border"
-                        required
-                      />
-                      <button
-                        onClick={sendEmail}
-                        disabled={!email}
-                        className="bg-green-500 text-white px-3 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-green-600 disabled:opacity-50 flex-shrink-0"
-                      >
-                        Send
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    The voucher will be sent to the client's email address.
-                  </p>
-                </>
-              )}
-            </div>
-          )}
+          
 
           {/* Image format selector - hidden on mobile to simplify UI */}
           {shareMode === null && showControls && (
