@@ -600,13 +600,7 @@ ${project.description ? `Notes: ${project.description}` : ''}
                     <MessageCircle className="h-5 w-5" />
                   </button>
                   
-                  <button
-                    onClick={copyToClipboard}
-                    className="p-1.5 rounded-full hover:bg-green-400 active:bg-green-600"
-                    title="Copy to Clipboard"
-                  >
-                    {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
-                  </button>
+                  
                   <button
                     onClick={downloadAsImage}
                     disabled={isGeneratingImage}
